@@ -13,6 +13,8 @@ import os
 import shutil
 import pdb
 
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+
 def main():
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--z_dim', type=int, default=100,

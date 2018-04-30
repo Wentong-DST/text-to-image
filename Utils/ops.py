@@ -31,7 +31,7 @@ class batch_norm(object):
 				except:
 					batch_mean, batch_var = tf.nn.moments(x, [0, 1], name='moments')
 				# https://github.com/paarthneekhara/text-to-image/issues/42
-				with tf.variable_scope(tf.get_variable_scope(), reuse=False):
+				with tf.variable_scope(tf.get_variable_scope(), reuse=tf.AUTO_REUSE):
 					ema_apply_op = self.ema.apply([batch_mean, batch_var])
                     
 				self.ema_mean, self.ema_var = self.ema.average(batch_mean), self.ema.average(batch_var)
