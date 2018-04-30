@@ -1,5 +1,6 @@
 import tensorflow as tf
 from Utils import ops
+import pdb
 
 class GAN:
 	'''
@@ -164,13 +165,16 @@ class GAN:
 		
 		# ADD TEXT EMBEDDING TO THE NETWORK
 		reduced_text_embeddings = ops.lrelu(ops.linear(t_text_embedding, self.options['t_dim'], 'd_embedding'))
-		reduced_text_embeddings = tf.expand_dims(reduced_text_embeddings,1)
-		reduced_text_embeddings = tf.expand_dims(reduced_text_embeddings,2)
-		tiled_embeddings = tf.tile(reduced_text_embeddings, [1,4,4,1], name='tiled_embeddings')
 		
-		h3_concat = tf.concat( 3, [h3, tiled_embeddings], name='h3_concat')
+		reduced_text_embeddings = tf.expand_dims(reduced_text_embeddings,1)
+		reduced_text_embeddings = tf.expand_dims(reduced_text_embeddings,2) # shape=(64, 1, 1, 256) 
+		tiled_embeddings = tf.tile(reduced_text_embeddings, [1,4,4,1], name='tiled_embeddings') # shape=(64, 4, 4, 256)
+    # now dim match, can concat
+		
+		h3_concat = tf.concat( 3, [h3, tiled_embeddings], name='h3_concat') # shape=(64, 4, 4, 768)
+    # shape=(64, 4, 4, 512)
 		h3_new = ops.lrelu( self.d_bn4(ops.conv2d(h3_concat, self.options['df_dim']*8, 1,1,1,1, name = 'd_h3_conv_new'))) #4
 		
-		h4 = ops.linear(tf.reshape(h3_new, [self.options['batch_size'], -1]), 1, 'd_h3_lin')
+		h4 = ops.linear(tf.reshape(h3_new, [self.options['batch_size'], -1]), 1, 'd_h3_lin') # shape=(64, 1)
 		
 		return tf.nn.sigmoid(h4), h4

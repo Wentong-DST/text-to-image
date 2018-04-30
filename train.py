@@ -11,6 +11,7 @@ import random
 import json
 import os
 import shutil
+import pdb
 
 def main():
 	parser = argparse.ArgumentParser()
@@ -90,6 +91,7 @@ def main():
 	for i in range(args.epochs):
 		batch_no = 0
 		while batch_no*args.batch_size < loaded_data['data_length']:
+			#pdb.set_trace()
 			real_images, wrong_images, caption_vectors, z_noise, image_files = get_training_batch(batch_no, args.batch_size, 
 				args.image_size, args.z_dim, args.caption_vector_length, 'train', args.data_dir, args.data_set, loaded_data)
 			
@@ -126,7 +128,8 @@ def main():
 					input_tensors['t_z'] : z_noise,
 				})
 			
-			print "LOSSES", d_loss, g_loss, batch_no, i, len(loaded_data['image_list'])/ args.batch_size
+			#print "LOSSES", d_loss, g_loss, batch_no, i, len(loaded_data['image_list'])/ args.batch_size
+			print "LOSSES", d_loss, g_loss, batch_no, i
 			batch_no += 1
 			if (batch_no % args.save_every) == 0:
 				print "Saving Images, Model"
